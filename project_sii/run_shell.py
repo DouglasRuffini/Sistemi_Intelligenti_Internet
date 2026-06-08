@@ -22,6 +22,24 @@ def show_menu():
     print("0. Esci")
     print("="*60)
 
+def downloading(downloader, target_query, specific_query, index):
+
+    if index == 1:
+        downloader.clear_previous_sessions()    
+    elif index == 2:
+        # Download di massa per superare abbondantemente i 100 articoli totali reali
+        downloader.fetch_arxiv_and_ar5iv(target_query)
+        downloader.fetch_zenodo(target_query)
+        downloader.fetch_nasa_ads(specific_query)
+        downloader.fetch_noaa(target_query)
+        downloader.fetch_openaire(target_query)
+        downloader.fetch_figshare(target_query)
+        downloader.fetch_kaggle(target_query)
+    elif index == 3:
+        downloader.generate_readme(target_query, specific_query)
+   
+    return True
+
 def main():
     downloader = AdaptiveDownloader()
     extractor = InformationExtractor()
@@ -29,32 +47,25 @@ def main():
     engine = SemanticsEngine()
     clusterer = IntelligenceClusterer()
     
+    target_query = 'thunderstorm neutron "Terrestrial Gamma-ray Flash" lightning'
+    specific_query = 'neutron thunderstorm'
+
+
     while True:
         show_menu()
         scelta = input("Seleziona un'opzione [0-4]: ").strip()
         
         if scelta == "1":
-            # Sostituisci la query vecchia con questa variante pulita per le API esterne
-            target_query = 'thunderstorm neutron "Terrestrial Gamma-ray Flash" lightning'
-            specific_query = 'neutron thunderstorm'
-            
+            # Sostituisci la query vecchia con questa variante pulita per le API esterne        
             print("\n[Pipeline] Inizializzazione Ambiente...")
             # FARE QUESTO PRIMA DI OGNI COSA: Cancella i risultati e gli archivi precedenti
-            downloader.clear_previous_sessions()
+            downloading(downloader, target_query, specific_query, 1)
             
             print("\n[Pipeline] Avvio dell'Ingestion Layer Multi-Sorgente...")
-            
-            # Download di massa per superare abbondantemente i 100 articoli totali reali
-            downloader.fetch_arxiv_and_ar5iv(target_query)
-            downloader.fetch_zenodo(target_query)
-            downloader.fetch_nasa_ads(specific_query)
-            downloader.fetch_noaa(target_query)
-            downloader.fetch_openaire(target_query)
-            downloader.fetch_figshare(target_query)
-            downloader.fetch_kaggle(target_query)
-            
+            # Chiamata a sub routin
+            downloading(downloader, target_query, specific_query, 2)
             # Generazione log
-            downloader.generate_readme(target_query, specific_query)
+            downloading(downloader, target_query, specific_query, 3)
                 
             print("\n[Pipeline] Avvio del Processing Layer (Information Extraction)...")
             for file in os.listdir("data/sources/"):
@@ -75,7 +86,10 @@ def main():
             
         elif scelta == "2":
             query = input("Inserisci query di ricerca: ").strip()
-            downloader.fetch_arxiv(query if query else "lightning neutron")
+    
+            # Download di massa per superare abbondantemente i 100 articoli totali reali
+            # Chiamata a sub routin
+            downloading(downloader, query if query else target_query, query if query else specific_query, 2)
             
         elif scelta == "3":
             print("[Pipeline] Estrazione in corso da data/sources/...")

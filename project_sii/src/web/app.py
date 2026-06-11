@@ -225,6 +225,10 @@ def read_live_logs():
         with open(LOG_FILE, "r", encoding="utf-8") as f:
             return Response(f.read(), mimetype='text/plain')
     return Response("", mimetype='text/plain')
+    
+@app.route('/data/extracted/<path:filename>')
+def serve_extracted_files(filename):
+    return send_from_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../data/extracted')), filename)
 
 if __name__ == '__main__':
     sys.stdout = RealTimeLogInterceptor(sys.stdout)

@@ -1,7 +1,7 @@
 """
 src/utils/metrics.py
 Modulo Analytics Layer: Calcolo delle correlazioni di Pearson e matrici
-per la mappatura del vuoto semantico (Specifiche Punto 3.2).
+per la mappatura del vuoto semantico (Specifiche Punto 2.3).
 """
 
 import os
